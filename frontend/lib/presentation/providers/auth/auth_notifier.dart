@@ -1,9 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/errors/failure_hundle.dart';
 import '../../../core/provider/provider.dart';
+import '../../../core/utils/SaveJWT.dart';
 import '../../../domain/usecase/auth/login_usecase.dart';
 import '../../../domain/usecase/auth/register_usecase.dart';
-
 import '../../../router/navigation.dart';
 import 'auth_state.dart';
 import '../../../domain/entities/user_entity.dart';
@@ -15,51 +16,53 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this.registerUseCase, this.loginUseCase, this.router) : super(AuthState.initial());
 
-  /// Register a new user
+  /// Register a new user via API
   Future<void> register(String name, String email, String password) async {
     state = AuthState.loading();
     final result = await registerUseCase.execute(name, email, password);
 
     result.fold(
-          (failure) {
-        print("Registration failed: ${failure.toString()}");
-        state = AuthState.error(failure.map(
-          serverFailure: (f) => f.message,
-          authFailure: (f) => f.message,
-          networkFailure: (_) => "Network issue occurred",
-          cacheFailure: (_) => "Cache issue occurred",
-        ));
-      },
+          (failure) => state = AuthState.error(handleFailure(failure)),  // ✅ Use centralized failure handling
           (_) {
-        print("Registration successful! Redirecting to login...");
+        print("✅ Registration successful! Redirecting to login...");
         state = AuthState.success();
-        router.go('/login'); // ✅ Redirect users to login after registering
+        router.go('/login');
       },
     );
   }
+
+  /// Login via backend API
   Future<void> login(String email, String password) async {
+    print("🔍 Starting login process for user: $email");
+
     state = AuthState.loading();
     final result = await loginUseCase.execute(email, password);
 
     result.fold(
-          (failure) => state = AuthState.error(
-        failure.map(
-          serverFailure: (f) => f.message,
-          authFailure: (f) => f.message,
-          networkFailure: (_) => "Network issue occurred",
-          cacheFailure: (_) => "Cache issue occurred",
-        ),
-      ),
-          (user) {
-        state = AuthState.success();
-        print("registration successful redirecting to login ---");
+          (failure) {
+        print("❌ Login failed: ${handleFailure(failure)}");
+        state = AuthState.error(handleFailure(failure));
+      },
+          (user) async {
+        print("✅ Login successful! User Role: ${user.role}, User ID: ${user.id}");
+
+        print("💾 Storing JWT Token...");
+        await saveJWT(user.token);  // ✅ Store JWT centrally
+
+        print("🔄 Redirecting user based on role...");
         _handleUserRedirection(user);
       },
     );
+
+    print("🔚 Login process completed.");
   }
 
-  void _handleUserRedirection(UserEntity user) {
-    if (user.role == "admin") {
+  void _handleUserRedirection(UserEntity user) async {
+    final token = await getJWT();
+
+    if (token == null || token.isEmpty) {
+      router.go('/login');
+    } else if (user.role == "admin") {
       router.go('/admin_home');
     } else {
       router.go('/user_home');
@@ -72,5 +75,6 @@ StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final registerUseCase = ref.watch(registerUseCaseProvider);
   final loginUseCase = ref.watch(loginUseCaseProvider);
   final router = ref.watch(goRouterProvider);
+
   return AuthNotifier(registerUseCase, loginUseCase, router);
 });

@@ -51,42 +51,24 @@ export const register = async(req,res) =>{
         res.json({success: false, message:error.message})
     }
 }
-export const login = async(req,res) =>{
-    const {email,password} = req.body;
-    if(!email || !password){
-        res.json({success: false,message : 'email and password are requred'})
+export const login = async(req, res) => {
+  try {
+    const { email, password } = req.body;
 
-    }
-    try{
-        const user = await userModel.findOne({email});
-        if(!user){
-            return res.json({success:false,message:'Invalid email'})
-
-        }
-        const isMatch = await bcrypt.compare(password,user.password)
-        if(!isMatch){
-            return res.json({ success: false, message: 'Invalid password' });
-
-        }
-
-        const token = jwt.sign({id:user._id,role: user.role},process.env.JWT_SECRET,{expiresIn:'7d'});
-
-        res.cookie('token',token,{
-            httpOnly: true,
-            secure: process.env.Node_ENV == 'production',
-            sameSite:process.env.NODE_ENV =='production'? 'none':'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-
-
-        });
-        return res.json({ success: true, message: 'User sign in successfully',role: user.role, token:user,token,id :user.id});
-
-
-    }catch(error){
-        return res.json({success:false,message: error.message})
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      console.log("❌ User not found.");
+      return res.json({ success: false, message: "Invalid email" });
     }
 
-}
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ success: true, message: "User sign in successfully", role: user.role, token, id: user.id });
+  } catch (error) {
+   
+    return res.json({ success: false, message: error.message });
+  }
+};
 
  
 

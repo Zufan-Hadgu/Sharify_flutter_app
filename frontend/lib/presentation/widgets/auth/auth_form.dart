@@ -8,6 +8,7 @@ class AuthForm extends StatefulWidget {
   @override
   _AuthFormState createState() => _AuthFormState();
 }
+
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -30,24 +31,34 @@ class _AuthFormState extends State<AuthForm> {
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            controller: nameController,
-            decoration: const InputDecoration(labelText: "Name"),
-          ),
-          TextFormField(
-            controller: emailController,
-            decoration: const InputDecoration(labelText: "Email"),
-          ),
-          TextFormField(
-            controller: passwordController,
-            decoration: const InputDecoration(labelText: "Password"),
-          ),
-          const SizedBox(height: 16),
+          _buildTextField(nameController, "Name", Icons.person),
+          const SizedBox(height: 10),
+          _buildTextField(emailController, "Email", Icons.email),
+          const SizedBox(height: 10),
+          _buildTextField(passwordController, "Password", Icons.lock, isPassword: true),
+          const SizedBox(height: 20),
+
           ElevatedButton(
             onPressed: _submit,
-            child: const Text("Register"),
+            child: const Text("Sign Up"),
+            style: ElevatedButton.styleFrom(
+              iconColor: Color(0xFF005D73),
+              minimumSize: const Size(double.infinity, 50),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(),
       ),
     );
   }

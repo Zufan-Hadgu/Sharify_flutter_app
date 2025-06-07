@@ -4,6 +4,7 @@ class UserEntity {
   final String email;
   final String role;
   final String? profilePicture;
+  final String token;
 
   UserEntity({
     required this.id,
@@ -11,5 +12,6 @@ class UserEntity {
     required this.email,
     required this.role,
     this.profilePicture,
+    required this.token,
   });
 }

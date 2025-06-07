@@ -4,7 +4,8 @@ class UserModel {
   final String email;
   final String password;
   final String role;
-  final String profilePicture; // Default empty profile picture
+  final String profilePicture;
+  final String token;
 
   UserModel({
     required this.id,
@@ -13,27 +14,34 @@ class UserModel {
     required this.password,
     required this.role,
     required this.profilePicture,
+    required this.token,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
+    if (!map.containsKey('id') || !map.containsKey('token')) {
+      throw Exception("Invalid API response: Missing required fields.");
+    }
+
     return UserModel(
-      id: map['id'],
-      name: map['name'],
-      email: map['email'],
-      password: map['password'],
-      role: map['role'],
-      profilePicture: map['profilePicture'] ?? "", // Handle optional profile picture
+      id: map['id'] ?? '',
+      name: map['name'] ?? 'Unknown',  // ✅ Handle missing name
+      email: map['email'] ?? '',
+      password: map.containsKey('password') ? map['password'] : '',
+      role: map['role'] ?? 'user',
+      profilePicture: map['profilePicture'] ?? 'default.png',
+      token: map['token'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
-      "name": name,
-      "email": email,
-      "password": password,
-      "role": role,
-      "profilePicture": profilePicture,
+      'id': id,
+      'name': name,
+      'email': email,
+      'password': password,
+      'role': role,
+      'profilePicture': profilePicture,
+      'token': token,
     };
   }
 }

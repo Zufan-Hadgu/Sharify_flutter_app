@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/errors/failure_hundle.dart';
+import '../../../core/provider/item_provider.dart';
 import '../../../core/provider/provider.dart';
 import '../../../core/utils/SaveJWT.dart';
 import '../../../domain/usecase/auth/login_usecase.dart';
@@ -13,8 +14,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final RegisterUseCase registerUseCase;
   final LoginUseCase loginUseCase;
   final GoRouter router;
+  final Ref ref;
 
-  AuthNotifier(this.registerUseCase, this.loginUseCase, this.router) : super(AuthState.initial());
+  AuthNotifier(this.ref,this.registerUseCase, this.loginUseCase, this.router): super(AuthState.initial());
 
   /// Register a new user via API
   Future<void> register(String name, String email, String password) async {
@@ -51,6 +53,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
         print("🔄 Redirecting user based on role...");
         _handleUserRedirection(user);
+
+        print("🔄 Fetching items after login...");
+        ref.read(itemNotifierProvider.notifier).loadItems(); // ✅ Fetch items
       },
     );
 
@@ -76,5 +81,5 @@ StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final loginUseCase = ref.watch(loginUseCaseProvider);
   final router = ref.watch(goRouterProvider);
 
-  return AuthNotifier(registerUseCase, loginUseCase, router);
+  return AuthNotifier(ref, registerUseCase, loginUseCase, router); // ✅ Pass ref here
 });

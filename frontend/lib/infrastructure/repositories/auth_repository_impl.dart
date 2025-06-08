@@ -25,14 +25,13 @@ class AuthRepositoryImpl implements AuthRepository {
         profilePicture: '',
         token: '',
       );
-
       await authRemote.registerUser(user);  // ✅ Send to MongoDB
       await authLocal.saveUser(user);  // ✅ Store only user details (no password)
 
-      print("✅ Registration completed successfully!");
+      print("Registration completed successfully!");
       return const Right(null);
     } catch (e) {
-      print("🔥 Registration Error: ${e.toString()}");  // ✅ Debug errors
+      print("Registration Error: ${e.toString()}");  // ✅ Debug errors
       return Left(Failure.serverFailure(e.toString()));
     }
   }
@@ -40,12 +39,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, UserEntity>> login(String email, String password) async {
     try {
-      print("🔍 Attempting remote login for email: $email");
+      print("Attempting remote login for email: $email");
 
       final userModel = await authRemote.login(email, password);
 
       if (userModel != null) {
-        print("✅ Remote login successful! Received user data: ${userModel.toMap()}");
+        print("Remote login successful! Received user data: ${userModel.toMap()}");
 
         await saveJWT(userModel.token);
         return Right(UserEntity(
@@ -57,11 +56,11 @@ class AuthRepositoryImpl implements AuthRepository {
           token: userModel.token,
         ));
       } else {
-        print("❌ Login failed: Invalid email or password");
+        print("Login failed: Invalid email or password");
         return Left(Failure.authFailure("Invalid email or password"));
       }
     } catch (e) {
-      print("🔥 Exception occurred during login: ${e.toString()}");
+      print("Exception occurred during login: ${e.toString()}");
       return Left(Failure.serverFailure(e.toString()));
     }
   }

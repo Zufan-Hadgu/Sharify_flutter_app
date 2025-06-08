@@ -23,9 +23,9 @@ class UserModel {
     }
 
     return UserModel(
-      id: map['id'] ?? '',
-      name: map['name'] ?? 'Unknown',  // ✅ Handle missing name
-      email: map['email'] ?? '',
+      id: map['id'],
+      name: map['name'],  // ✅ Handle missing name
+      email: map['email'],
       password: map.containsKey('password') ? map['password'] : '',
       role: map['role'] ?? 'user',
       profilePicture: map['profilePicture'] ?? 'default.png',

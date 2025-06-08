@@ -10,8 +10,6 @@ import 'package:go_router/go_router.dart';
 
 
 final dioProvider = Provider((ref) => DioClient().dio);
-
-
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dio = ref.watch(dioProvider);
   return AuthRepositoryImpl(

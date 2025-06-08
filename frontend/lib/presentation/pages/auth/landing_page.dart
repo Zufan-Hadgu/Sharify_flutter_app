@@ -11,23 +11,40 @@ class GettingStarted extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(28.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center, // ✅ Center content vertically
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center, // ✅ Center text & image
               children: [
                 Image.asset("assets/images/landing_page.png", height: 200),  // Your image
                 const SizedBox(height: 20),
-                const Text("SHARIFY", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const Text("Join our vibrant sharing community today", style: TextStyle(fontSize: 16)),
+                const Text(
+                  "SHARIFY",
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center, // ✅ Center text
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Join our vibrant sharing community today",
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
+            const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => context.go('/register'),  // ✅ Navigation 2.0
-                child: const Text("Get Started"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF005D73),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () => context.go('/register'),
+                child: const Text("Get Started", style: TextStyle(fontSize: 18)),
               ),
             ),
           ],

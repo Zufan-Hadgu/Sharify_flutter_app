@@ -42,7 +42,7 @@ class _AuthFormState extends State<AuthForm> {
             onPressed: _submit,
             child: const Text("Sign Up"),
             style: ElevatedButton.styleFrom(
-              iconColor: Color(0xFF005D73),
+              backgroundColor: Color(0xFF005D73),
               minimumSize: const Size(double.infinity, 50),
             ),
           ),

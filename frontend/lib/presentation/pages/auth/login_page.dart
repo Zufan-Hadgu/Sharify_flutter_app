@@ -15,18 +15,19 @@ class LoginPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.go('/register'), // ✅ Navigation back to register
+          icon: const Icon(Icons.arrow_back, color: Colors.black), // ✅ Back button at the top
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                onPressed: () => context.go('/register'),
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-              ),
-            ),
             const Text(
               "Login",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -41,11 +42,6 @@ class LoginPage extends ConsumerWidget {
 
             const SizedBox(height: 40),
 
-
-            // if (authState.loading)
-            //   const CircularProgressIndicator(color: Color(0xFF005D73)),
-
-
             authState.maybeWhen(
               error: (message) => Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -56,7 +52,6 @@ class LoginPage extends ConsumerWidget {
               ),
               orElse: () => const SizedBox(),
             ),
-
           ],
         ),
       ),

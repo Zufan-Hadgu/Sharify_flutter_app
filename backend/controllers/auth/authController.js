@@ -52,24 +52,52 @@ export const register = async(req,res) =>{
     }
 }
 export const login = async(req, res) => {
-  try {
     const { email, password } = req.body;
-
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      console.log("❌ User not found.");
-      return res.json({ success: false, message: "Invalid email" });
+    
+    if (!email || !password) {
+        return res.json({ success: false, message: 'Email and password are required' });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    try {
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.json({ success: false, message: 'Invalid email' });
+        }
 
-    res.json({ success: true, message: "User sign in successfully", role: user.role, token, id: user.id });
-  } catch (error) {
-   
-    return res.json({ success: false, message: error.message });
-  }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.json({ success: false, message: 'Invalid password' });
+        }
+
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+       
+        return res.json({
+            success: true,
+            message: 'User sign in successfully',
+            role: user.role,
+            token: token, 
+            id: user._id,
+            name: user.name, 
+            email: user.email, 
+            profilePicture: user.profilePicture || 'default.png', 
+        });
+
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
 };
-
  
 
 

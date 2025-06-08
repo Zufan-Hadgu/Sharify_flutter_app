@@ -3,18 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/user/item_detail_notifier.dart';
 
-
-class ItemDetailPage extends ConsumerWidget {
+class ItemDetailPage extends ConsumerStatefulWidget {
   final String id;
 
   const ItemDetailPage({required this.id, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(itemDetailNotifierProvider.notifier);
+  ConsumerState<ItemDetailPage> createState() => _ItemDetailPageState();
+}
+
+class _ItemDetailPageState extends ConsumerState<ItemDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the item details once when the page is first built
+    Future.microtask(() =>
+        ref.read(itemDetailNotifierProvider.notifier).fetchItemDetails(widget.id));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final item = ref.watch(itemDetailNotifierProvider);
 
-    Future.delayed(Duration.zero, () => notifier.fetchItemDetails(id));
     return Scaffold(
       appBar: AppBar(
         title: Text("Item Profile", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -27,27 +37,18 @@ class ItemDetailPage extends ConsumerWidget {
           ? Center(child: CircularProgressIndicator())
           : Padding(
         padding: EdgeInsets.all(16),
-        child: ListView.builder(
+        child: ListView(
           physics: BouncingScrollPhysics(),
-          itemCount: 4,
-          itemBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                return _buildImage(item.image);
-              case 1:
-                return _buildTitle(item.name);
-              case 2:
-                return _buildStyledSection("Description", item.description ?? "No description available");
-              case 3:
-                return _buildStyledSection("Terms and Conditions", item.termsAndConditions ?? "No terms provided");
-              case 4:
-                return _buildStyledSection(
-                    "Contact Info",
-                    "📞 ${item.telephon ?? "No phone available"}\n📍 ${item.address ?? "No address available"}");
-              default:
-                return SizedBox();
-            }
-          },
+          children: [
+            _buildImage(item.image),
+            _buildTitle(item.name),
+            _buildStyledSection("Description", item.description ?? "No description available"),
+            _buildStyledSection("Terms and Conditions", item.termsAndConditions ?? "No terms provided"),
+            _buildStyledSection(
+              "Contact Info",
+              "📞 ${item.telephon ?? "No phone available"}\n📍 ${item.address ?? "No address available"}",
+            ),
+          ],
         ),
       ),
     );
@@ -61,7 +62,6 @@ class ItemDetailPage extends ConsumerWidget {
         height: 250,
         width: double.infinity,
         fit: BoxFit.cover,
-
       ),
     );
   }

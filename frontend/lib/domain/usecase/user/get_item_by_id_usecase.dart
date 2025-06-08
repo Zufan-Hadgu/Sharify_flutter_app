@@ -8,6 +8,18 @@ class GetItemByIdUseCase {
   GetItemByIdUseCase(this.repository);
 
   Future<ItemEntity?> execute(String id) async {
-    return await repository.getItemById(id); // ✅ Fetch item details from SQLite
+    print("📥 [UseCase] execute() called with ID: $id");
+
+    try {
+      print("🔍 [UseCase] Calling repository...");
+      final result = await repository.getItemById(id);
+      print("📤 [UseCase] Repository returned: $result");
+
+      return result;
+    } catch (e) {
+      print("❌ [UseCase] Error: $e"); // ✅ Catch errors
+      return null;
+    }
   }
+
 }

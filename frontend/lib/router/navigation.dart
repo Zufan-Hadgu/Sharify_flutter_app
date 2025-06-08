@@ -1,7 +1,7 @@
 import 'package:dartz/dartz_streaming.dart';
 import 'package:dartz/dartz_streaming.dart' as flutter;
 
-import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -25,13 +25,13 @@ final goRouterProvider = Provider((ref) => GoRouter(
     GoRoute(path: "/lending", builder: (context, state) =>  AdminLendingScreen()),
     GoRoute(path: "/profile", builder: (context, state) =>  ProfileScreen()),
 
-    // ✅ Fixing Item Detail Route
+
     GoRoute(
       path: "/item-detail",
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>; // ✅ Extract data
-        final id = extra["id"] as String;
-
+        print("📥 Received navigation extra: ${state.extra}"); // ✅ Debug
+        final extra = state.extra as Map<String, dynamic>?;
+        final id = extra?["id"] as String;
         return ItemDetailPage(id: id);
       },
     ),

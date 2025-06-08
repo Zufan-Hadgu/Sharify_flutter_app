@@ -11,6 +11,7 @@ class ItemModel {
   final String termsAndConditions;
   final String telephon;
   final String address;
+  final String note;
 
   ItemModel({
     required this.id,
@@ -22,6 +23,7 @@ class ItemModel {
     required this.termsAndConditions,
     required this.telephon,
     required this.address,
+    required this.note
   });
 
   factory ItemModel.fromJson(Map<String, dynamic> json) => ItemModel(
@@ -30,10 +32,11 @@ class ItemModel {
     image: fixImageUrl(json['image']),
     smalldescription: json['smalldescription'],
     description: json['description'] ?? '',  // ✅ Handle missing fields
-    isAvailable: json['isAvailable'] ?? false,
+    isAvailable: json['isAvailable'] == 1,
     termsAndConditions: json['termsAndConditions'] ?? '',
     telephon: json['telephon'] ?? '',
     address: json['address'] ?? '',
+    note: json['note'] ?? '',
   );
 
 
@@ -47,6 +50,7 @@ class ItemModel {
     'termsAndConditions': termsAndConditions,
     'telephon': telephon,
     'address': address,
+    'note': note,
   };
 
 
@@ -60,6 +64,7 @@ class ItemModel {
     termsAndConditions: termsAndConditions,
     telephon: telephon,
     address: address,
+    note: note,
   );
 
 
@@ -73,5 +78,6 @@ class ItemModel {
     termsAndConditions: entity.termsAndConditions,
     telephon: entity.telephon,
     address: entity.address,
+    note: entity.note,
   );
 }

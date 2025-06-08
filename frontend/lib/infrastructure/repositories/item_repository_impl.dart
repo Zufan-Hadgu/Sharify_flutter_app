@@ -33,11 +33,24 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-  @override
   Future<ItemEntity?> getItemById(String id) async {
-    final itemModel = await localDataSource.getItemById(id);
-    return itemModel?.toEntity(); // ✅ Convert ItemModel to ItemEntity
+    print("🔍 [Repository] Searching for item ID in local storage: $id");
+
+    try {
+      final localItem = await localDataSource.getItemById(id);
+      if (localItem != null) {
+        print("✅ [Repository] Found in Local Storage: ${localItem.name}");
+        return localItem.toEntity(); // ✅ Returns the item from local storage
+      }
+
+      print("❌ [Repository] No Item Found in Local Storage.");
+      return null;
+    } catch (e) {
+      print("❌ [Repository] Error: $e");
+      return null;
+    }
   }
+
 
 
 

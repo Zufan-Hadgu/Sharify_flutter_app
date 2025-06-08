@@ -8,6 +8,7 @@ class ItemEntity {
   final String termsAndConditions;
   final String telephon;
   final String address;
+  final String note;
 
   ItemEntity({
     required this.id,
@@ -19,5 +20,7 @@ class ItemEntity {
     required this.termsAndConditions,
     required this.telephon,
     required this.address,
+    required this.note,
+
   });
 }

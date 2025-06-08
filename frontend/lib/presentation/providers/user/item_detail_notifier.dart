@@ -9,10 +9,21 @@ class ItemDetailNotifier extends StateNotifier<ItemEntity?> {
   ItemDetailNotifier(this.getItemByIdUseCase) : super(null);
 
   Future<void> fetchItemDetails(String id) async {
-    state = await getItemByIdUseCase.execute(id); // ✅ Fetch item details
+    print("🔍 Fetching Item Details for ID: $id");
+    state = null;
+
+    print("📥 [Notifier] Calling use case...");
+    final result = await getItemByIdUseCase.execute(id); // ✅ This might be failing
+
+    print("📤 [Notifier] Use case returned: $result"); // ✅ Log output
+
+    state = result;
   }
 }
 
 final itemDetailNotifierProvider = StateNotifierProvider<ItemDetailNotifier, ItemEntity?>(
-      (ref) => ItemDetailNotifier(ref.read(getItemByIdUseCaseProvider)),
+      (ref) {
+    print("✅ Creating ItemDetailNotifier"); // ✅ Debugging
+    return ItemDetailNotifier(ref.watch(getItemByIdUseCaseProvider));
+  },
 );

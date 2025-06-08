@@ -122,17 +122,22 @@ export const updateItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
     try {
-        const items = await ItemModel.find({});
+        const items = await ItemModel.find({}).populate("borrowedBy"); // ✅ Populate user info for borrowedBy
 
         const itemDetails = items.map(item => ({
             id: item.id,
-            image: `http://localhost:4000${item.image.replace(/^http:\/\/localhost:4000/, '')}`,  
+            image: `http://localhost:4000${item.image.replace(/^http:\/\/localhost:4000/, '')}`,
             name: item.name,
             smalldescription: item.smalldescription,
+            description: item.description,
             isAvailable: item.isAvailable,
+            termsAndConditions: item.termsAndConditions,
+            telephon: item.telephon, 
+            address: item.address,
+            note: item.note,
         }));
 
-        console.log("✅ Sending Image URLs:", itemDetails.map(i => i.image)); // ✅ Debugging output
+        console.log("✅ Sending Full Item Data:", itemDetails);
 
         res.status(200).json({ items: itemDetails });
     } catch (error) {

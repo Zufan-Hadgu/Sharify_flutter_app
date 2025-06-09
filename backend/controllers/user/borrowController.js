@@ -17,6 +17,8 @@ export const getItemDetails = async (req, res) => {
 
 
 export const borrowItem = async (req, res) => {
+     console.log("📌 Inside borrowItem API..."); // ✅ First log
+
     try {
         const { id } = req.params;
         const userId = req.user.id; // Get user ID from authentication
@@ -40,9 +42,7 @@ export const borrowItem = async (req, res) => {
 
 export const getBorrowedItems = async (req, res) => {
     try {
-        const userId = req.user.id;  
-
-         
+        const userId = req.user.id;      
         const items = await ItemModel.find({ borrowedBy: userId });
 
         

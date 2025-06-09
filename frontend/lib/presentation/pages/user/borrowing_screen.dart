@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/provider/item_provider.dart';
 import '../../../core/utils/SaveJWT.dart';
+import '../../widgets/user/add_note.dart';
 import '../../widgets/user/borrowed_item_card.dart';
 import '../auth/base_screen.dart';
 
@@ -59,10 +60,17 @@ class UserBorrowingScreen extends HookConsumerWidget {
                   return BorrowedItemCard(
                     item: item,
                     onAddNoteClick: (itemId, initialNote) {
-                      // Optional: Show dialog
+                      showBorrowingNoteDialog(
+                        context: context,  // ✅ Ensure context is passed correctly
+                        itemId: itemId,
+                        initialNote: initialNote,
+                        onUpdateNote: (updatedNote) {
+                          ref.read(itemNotifierProvider.notifier).updateBorrowNote(itemId, updatedNote);
+                        },
+                      );
                     },
                     onDeleteClick: () {
-                      // Optional: Handle delete
+                      ref.read(itemNotifierProvider.notifier).removeFromBorrowed(item.id);
                     },
                   );
                 },

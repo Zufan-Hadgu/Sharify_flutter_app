@@ -60,4 +60,38 @@ class ItemRemoteDataSource {
       return [];
     }
   }
+
+  Future<bool> updateNote(String itemId, String note, String token) async {
+    try {
+
+      final response = await dio.put(
+        '/api/borrow/borrowed-item/note/$itemId',
+        data: {"note": note},
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return true;
+      } else {
+
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+  Future<bool> removeBorrowedItem(String itemId, String token) async {
+    try {
+      final response = await dio.delete(
+        '/api/borrow/borrowed-item/$itemId',
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      return response.statusCode == 200 && response.data['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
 }

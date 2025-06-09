@@ -4,6 +4,7 @@ import 'package:dartz/dartz_streaming.dart' as flutter;
 
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sharify_flutter_app/presentation/pages/user/borrowing_screen.dart';
 
 import '../presentation/pages/admin/admin_home.dart';
 import '../presentation/pages/admin/lending_screen.dart';
@@ -24,6 +25,8 @@ final goRouterProvider = Provider((ref) => GoRouter(
     GoRoute(path: "/admin_home", builder: (context, state) =>  AdminDashboardScreen()),
     GoRoute(path: "/lending", builder: (context, state) =>  AdminLendingScreen()),
     GoRoute(path: "/profile", builder: (context, state) =>  ProfileScreen()),
+    GoRoute(path: "/borrowing", builder: (context, state) =>  UserBorrowingScreen()),
+
 
 
     GoRoute(

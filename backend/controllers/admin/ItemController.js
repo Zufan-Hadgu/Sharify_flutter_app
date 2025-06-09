@@ -156,8 +156,8 @@ export const getStatistics = async (req, res) => {
         const availableItems = await ItemModel.countDocuments({ isAvailable: true });
 
         res.status(200).json({ 
-            success: true, 
-            statistics: { totalUsers, availableItems } 
+            
+            totalUsers, availableItems 
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

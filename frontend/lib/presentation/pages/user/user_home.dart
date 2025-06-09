@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/provider/item_provider.dart';
+import '../../../core/utils/SaveJWT.dart';
 import '../../widgets/user/homecard.dart';
 import '../auth/base_screen.dart';
 
@@ -52,7 +53,12 @@ class UserHomePage extends ConsumerWidget {
                     name: item.name,
                     smallDescription: item.smalldescription ?? '',
                     image: item.image,
-                    onBorrow: () {},
+                    onBorrow: () async {
+                        ref.read(itemNotifierProvider.notifier).borrowItem(
+                            item.id
+                        );
+
+                    },
                     onTap: () => GoRouter.of(context).push('/item-detail', extra: {"id": item.id}),
                   );
                 },

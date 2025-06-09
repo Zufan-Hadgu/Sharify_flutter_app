@@ -1,4 +1,3 @@
-// datasources/remote/item_remote.dart
 import 'package:dio/dio.dart';
 import '../../../core/utils/SaveJWT.dart';
 import '../../models/Item_model.dart';
@@ -17,24 +16,47 @@ class ItemRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        // 🔍 Log raw response data
-        print("📦 Raw API Response: ${response.data}");
-
         final data = response.data['items'] as List;
-        print("✅ Items Found in API Response: ${data.length}");
-
-        final parsedItems = data.map((json) => ItemModel.fromJson(json))
-            .toList();
-        print("🔄 Parsed Items: ${parsedItems.length}");
-        parsedItems.forEach((item) => print("🧾 Item: $item"));
-
-        return parsedItems;
+        return data.map((json) => ItemModel.fromJson(json)).toList();
       } else {
-        print("❌ API Error Status: ${response.statusCode}");
         throw Exception("API returned status: ${response.statusCode}");
       }
-    } catch (error) {
-      print("❗️Fetch Error: $error");
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<bool> borrowItem(String itemId, String token) async {
+    try {
+      final response = await dio.put(
+        '/api/borrow/borrow-item/$itemId',
+        options: Options(headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        }),
+      );
+
+      return response.statusCode == 200 && response.data['success'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<List<ItemModel>> fetchBorrowedItems() async {
+    try {
+      final token = await getJWT();
+      final response = await dio.get(
+        '/api/borrow/borrowed-items',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data['borrowedItems'] as List;
+        return data.map((json) => ItemModel.fromJson(json)).toList();
+      } else {
+        return [];
+      }
+    } catch (_) {
       return [];
     }
   }

@@ -29,8 +29,6 @@ final getBorrowedItemsUseCaseProvider = Provider((ref) => GetBorrowedItemsUseCas
 final updateNoteUseCaseProvider = Provider((ref) => UpdateNoteUseCase(ref.watch(itemRepositoryProvider)));
 final removeBorrowedItemUseCaseProvider = Provider((ref) => RemoveBorrowedItemUseCase(ref.watch(itemRepositoryProvider)));
 
-
-
 final itemNotifierProvider = StateNotifierProvider<ItemNotifier, ItemState>((ref) {
   final useCase = ref.watch(getItemsUseCaseProvider);
   final borrowItemUseCaseProvide = ref.watch(borrowItemUseCaseProvider);

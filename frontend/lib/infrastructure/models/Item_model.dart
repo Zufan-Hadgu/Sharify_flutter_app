@@ -6,67 +6,69 @@ class ItemModel {
   final String name;
   final String image;
   final String smalldescription;
-  final String description;
-  final bool isAvailable;
-  final String termsAndConditions;
-  final String telephon;
-  final String address;
-  final String note;
+  final String? description;
+  final bool? isAvailable;
+  final String? termsAndConditions;
+  final String? telephon;
+  final String? address;
+  final String? note;
+  final String? borrowedBy;
 
   ItemModel({
     required this.id,
     required this.name,
     required this.image,
     required this.smalldescription,
-    required this.description,
-    required this.isAvailable,
-    required this.termsAndConditions,
-    required this.telephon,
-    required this.address,
-    required this.note
+    this.description,
+    this.isAvailable,
+    this.termsAndConditions,
+    this.telephon,
+    this.address,
+    this.note,
+    this.borrowedBy,
   });
 
   factory ItemModel.fromJson(Map<String, dynamic> json) => ItemModel(
-    id: json['id'],  // ✅ Change '_id' to 'id'
+    id: json['id'],
     name: json['name'],
     image: fixImageUrl(json['image']),
     smalldescription: json['smalldescription'],
-    description: json['description'] ?? '',  // ✅ Handle missing fields
+    description: json['description'],
     isAvailable: json['isAvailable'] == 1,
-    termsAndConditions: json['termsAndConditions'] ?? '',
-    telephon: json['telephon'] ?? '',
-    address: json['address'] ?? '',
-    note: json['note'] ?? '',
+    termsAndConditions: json['termsAndConditions'],
+    telephon: json['telephon'],
+    address: json['address'],
+    note: json['note'],
+    borrowedBy: json['borrowedBy'],
   );
-
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
     'image': image,
     'smalldescription': smalldescription,
-    'description': description,
-    'isAvailable': isAvailable,
-    'termsAndConditions': termsAndConditions,
-    'telephon': telephon,
-    'address': address,
-    'note': note,
+    if (description != null) 'description': description,
+    if (isAvailable != null) 'isAvailable': isAvailable,
+    if (termsAndConditions != null) 'termsAndConditions': termsAndConditions,
+    if (telephon != null) 'telephon': telephon,
+    if (address != null) 'address': address,
+    if (note != null) 'note': note,
+    if (borrowedBy != null) 'borrowedBy': borrowedBy,
   };
-
 
   ItemEntity toEntity() => ItemEntity(
     id: id,
     name: name,
     image: image,
     smalldescription: smalldescription,
-    description: description,
-    isAvailable: isAvailable,
-    termsAndConditions: termsAndConditions,
-    telephon: telephon,
-    address: address,
-    note: note,
+    description: description ?? '',
+    isAvailable: isAvailable ?? false,
+    termsAndConditions: termsAndConditions ?? '',
+    telephon: telephon ?? '',
+    address: address ?? '',
+    note: note ?? '',
+    borrowedBy: borrowedBy,
   );
-
 
   factory ItemModel.fromEntity(ItemEntity entity) => ItemModel(
     id: entity.id,
@@ -79,5 +81,6 @@ class ItemModel {
     telephon: entity.telephon,
     address: entity.address,
     note: entity.note,
+    borrowedBy: entity.borrowedBy,
   );
 }

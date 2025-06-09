@@ -16,7 +16,7 @@ class _ItemDetailPageState extends ConsumerState<ItemDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch the item details once when the page is first built
+
     Future.microtask(() =>
         ref.read(itemDetailNotifierProvider.notifier).fetchItemDetails(widget.id));
   }

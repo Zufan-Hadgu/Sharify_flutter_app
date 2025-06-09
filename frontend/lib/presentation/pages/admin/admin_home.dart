@@ -1,37 +1,54 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../providers/admin/admin_dashboard_provider.dart';
 import '../auth/base_screen.dart';
 
-class AdminDashboardScreen extends StatelessWidget {
+class AdminDashboardScreen extends ConsumerWidget {
+  const AdminDashboardScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(adminDashboardProvider);
+
     return BaseScreen(
       role: "admin",
       currentRoute: '/admin_home',
-      child: Center(
+      child: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.dashboard, size: 60, color: Colors.purple),
-            SizedBox(height: 20),
-            Text(
-              "Admin Dashboard",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Manage your lending system",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 20),
-            // Quick stats example
+            const SizedBox(height: 100),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatCard("Active Loans", "12", Colors.blue),
-                _buildStatCard("Overdue", "3", Colors.orange),
+                _buildStatTile(
+                  icon: Icons.person_add_alt,
+                  label: 'Total active users',
+                  value: state.isLoading ? '...' : state.totalUsers.toString(),
+                ),
+                _buildStatTile(
+                  icon: Icons.inventory_2,
+                  label: 'Available items',
+                  value: state.isLoading ? '...' : state.totalItems.toString(),
+                ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(32.0, 50.0, 32.0, 0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004F5D),
+                  ),
+                  icon: const Icon(Icons.rate_review_outlined),
+                  onPressed: () {
+                    // TODO: Navigate to review items page
+                  },
+                  label: const Text("Review Items"),
+                ),
+              ),
             ),
           ],
         ),
@@ -39,18 +56,26 @@ class AdminDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, Color color) {
-    return Card(
-      color: color.withOpacity(0.1),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(title, style: TextStyle(color: color)),
-          ],
+  Widget _buildStatTile({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, size: 30),
+        const SizedBox(height: 10),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF004F5D),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

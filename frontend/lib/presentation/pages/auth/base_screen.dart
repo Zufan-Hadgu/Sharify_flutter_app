@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 class BaseScreen extends StatelessWidget {
   final Widget child;
   final String role;
@@ -18,7 +21,7 @@ class BaseScreen extends StatelessWidget {
     if (role == "admin") {
       switch (currentRoute) {
         case '/admin_home':
-          return "Dashboard"; // ✅ Changed from "Admin Dashboard"
+          return "Dashboard";
         case '/lending':
           return "Lending";
         case '/profile':
@@ -71,11 +74,11 @@ class BaseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(60),
         child: Container(
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: Colors.grey.shade300, width: 1), // ✅ Added grey bottom line
+              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
             ),
           ),
           child: AppBar(
@@ -85,25 +88,48 @@ class BaseScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             title: Text(
               _getAppBarTitle(),
-              style: TextStyle(
-                fontSize: 22, // ✅ Increased font size
-                fontWeight: FontWeight.bold, // ✅ Made it bold
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
             actions: [
-              // Profile avatar (top-right corner)
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
-                child: GestureDetector(
-                  onTap: () => context.go('/profile'),
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.grey[300],
-                    child: Icon(Icons.person, color: Colors.grey[600]),
-                    // Replace with user image if available:
-                    // backgroundImage: NetworkImage(user.profilePicUrl),
-                  ),
+                child: Row(
+                  children: [
+                    // ✅ Always show profile icon (EXCEPT on the profile screen for users)
+                    if (role == "admin" || currentRoute != "/profile")
+                      GestureDetector(
+                        onTap: () => context.go('/profile'),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey[300],
+                          child: const Icon(Icons.person, color: Colors.grey),
+                        ),
+                      ),
+
+                    // ✅ Show three dots (`more_vert`) ONLY when user (not admin) is on profile screen
+                    if (role != "admin" && currentRoute == "/profile")
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          onPressed: () => _showOptionsDialog(context),
+                        ),
+                      ),
+
+                    // ✅ Show logout icon ONLY when admin is on profile screen
+                    if (role == "admin" && currentRoute == "/profile")
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.logout, color: Colors.grey),
+                          onPressed: () => _showLogoutDialog(context),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -115,32 +141,14 @@ class BaseScreen extends StatelessWidget {
         currentIndex: _getCurrentIndex(),
         items: role == "admin"
             ? [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: "Dashboard",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: "Lending",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
+          const BottomNavigationBarItem(icon: Icon(Icons.library_books), label: "Lending"),
+          const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ]
             : [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: "Borrowing",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          const BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Borrowing"),
+          const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
         onTap: (index) {
           if (role == "admin") {
@@ -169,6 +177,53 @@ class BaseScreen extends StatelessWidget {
             }
           }
         },
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Logout"),
+        content: const Text("Are you sure you want to log out?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          ElevatedButton(
+            onPressed: () {
+              // ✅ Implement logout logic here
+              Navigator.pop(context);
+            },
+            child: const Text("Logout"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showOptionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Account Options"),
+        content: const Text("Choose an action:"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          ElevatedButton(
+            onPressed: () {
+              // ✅ Implement logout logic
+              Navigator.pop(context);
+            },
+            child: const Text("Logout"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // ✅ Implement account deletion logic
+              Navigator.pop(context);
+            },
+            child: const Text("Delete Account"),
+          ),
+        ],
       ),
     );
   }

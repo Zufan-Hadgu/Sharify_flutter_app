@@ -4,6 +4,7 @@ import '../../../core/utils/SaveJWT.dart';
 import '../../../domain/entities/item_entity.dart';
 import '../../../domain/usecase/user/borrow_iem_usecase.dart';
 import '../../../domain/usecase/user/get_item_usecase.dart';
+import '../../../domain/usecase/user/remove_borrowed_item_usecase.dart';
 import '../../../domain/usecase/user/update_note_use_case.dart';
 import 'item_state.dart';
 
@@ -12,10 +13,12 @@ class ItemNotifier extends StateNotifier<ItemState> {
   final BorrowItemUseCase borrowItemUseCase;
   final GetBorrowedItemsUseCase getBorrowedItemsUseCase;
   final UpdateNoteUseCase updateNoteUseCase;
+  final RemoveBorrowedItemUseCase removeBorrowedItemUseCase;
+
 
 
   ItemNotifier(this.useCase, this.borrowItemUseCase,
-      this.getBorrowedItemsUseCase, this.updateNoteUseCase)
+      this.getBorrowedItemsUseCase, this.updateNoteUseCase,this.removeBorrowedItemUseCase)
       : super(ItemState.initial()) {
     loadItems();
   }
@@ -78,4 +81,20 @@ class ItemNotifier extends StateNotifier<ItemState> {
       state = state.copyWith(error: "Failed to update note");
     }
   }
+
+  Future<void> removeFromBorrowed(String itemId) async {
+    try {
+      final success = await removeBorrowedItemUseCase.execute(itemId);
+
+      if (success) {
+        state = state.copyWith(
+          borrowedItems: state.borrowedItems.where((item) => item.id != itemId).toList(),
+        );
+      }
+    } catch (_) {
+      state = state.copyWith(error: "Failed to remove item from borrowed list");
+    }
+  }
 }
+
+

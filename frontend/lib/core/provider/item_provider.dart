@@ -11,6 +11,7 @@ import 'package:sharify_flutter_app/presentation/providers/user/item_state.dart'
 import '../../domain/usecase/user/borrow_iem_usecase.dart';
 import '../../domain/usecase/user/get_borrowed_item_usecase.dart';
 import '../../domain/usecase/user/get_item_by_id_usecase.dart';
+import '../../domain/usecase/user/remove_borrowed_item_usecase.dart';
 import '../../domain/usecase/user/update_note_use_case.dart';
 import '../../infrastructure/datasources/local/item_local.dart';
 import '../../infrastructure/datasources/remote/item_remote.dart';
@@ -26,11 +27,13 @@ final getItemByIdUseCaseProvider = Provider((ref) => GetItemByIdUseCase(ref.read
 final borrowItemUseCaseProvider = Provider((ref) => BorrowItemUseCase(ref.watch(itemRepositoryProvider)));
 final getBorrowedItemsUseCaseProvider = Provider((ref) => GetBorrowedItemsUseCase(ref.watch(itemRepositoryProvider)));
 final updateNoteUseCaseProvider = Provider((ref) => UpdateNoteUseCase(ref.watch(itemRepositoryProvider)));
+final removeBorrowedItemUseCaseProvider = Provider((ref) => RemoveBorrowedItemUseCase(ref.watch(itemRepositoryProvider)));
 
 final itemNotifierProvider = StateNotifierProvider<ItemNotifier, ItemState>((ref) {
   final useCase = ref.watch(getItemsUseCaseProvider);
   final borrowItemUseCaseProvide = ref.watch(borrowItemUseCaseProvider);
   final getBorrowedItemsUseCase = ref.watch(getBorrowedItemsUseCaseProvider);
   final updateNoteUseCase = ref.watch(updateNoteUseCaseProvider);
-  return ItemNotifier(useCase,borrowItemUseCaseProvide,getBorrowedItemsUseCase,updateNoteUseCase);
+  final removeBorrowedItemUseCase = ref.watch(removeBorrowedItemUseCaseProvider);
+  return ItemNotifier(useCase,borrowItemUseCaseProvide,getBorrowedItemsUseCase,updateNoteUseCase,removeBorrowedItemUseCase);
 });

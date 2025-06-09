@@ -68,4 +68,18 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
+  Future<bool> removeBorrowedItem(String itemId) async {
+    try {
+      final token = await getJWT(); // ✅ Retrieve stored authentication token
+      if (token == null) return false;
+
+      return await remoteDataSource.removeBorrowedItem(itemId, token);
+    } catch (e) {
+      print("❌ Error removing borrowed item: $e");
+      return false;
+    }
+  }
+
+
+
 }

@@ -69,7 +69,9 @@ class UserBorrowingScreen extends HookConsumerWidget {
                         },
                       );
                     },
-                    onDeleteClick: () {},
+                    onDeleteClick: () {
+                      ref.read(itemNotifierProvider.notifier).removeFromBorrowed(item.id);
+                    },
                   );
                 },
               ),

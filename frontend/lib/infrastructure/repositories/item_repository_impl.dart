@@ -56,4 +56,16 @@ class ItemRepositoryImpl implements ItemRepository {
     final items = await remoteDataSource.fetchBorrowedItems();
     return items.map((item) => item.toEntity()).toList();
   }
+
+  Future<bool> updateNote(String itemId, String note) async {
+    try {
+      final token = await getJWT();
+      if (token == null) return false;
+
+      return await remoteDataSource.updateNote(itemId, note, token);
+    } catch (_) {
+      return false;
+    }
+  }
+
 }

@@ -4,16 +4,19 @@ import '../../../core/utils/SaveJWT.dart';
 import '../../../domain/entities/item_entity.dart';
 import '../../../domain/usecase/user/borrow_iem_usecase.dart';
 import '../../../domain/usecase/user/get_item_usecase.dart';
+import '../../../domain/usecase/user/update_note_use_case.dart';
 import 'item_state.dart';
 
 class ItemNotifier extends StateNotifier<ItemState> {
   final GetItemsUseCase useCase;
   final BorrowItemUseCase borrowItemUseCase;
   final GetBorrowedItemsUseCase getBorrowedItemsUseCase;
+  final UpdateNoteUseCase updateNoteUseCase;
 
 
-
-  ItemNotifier(this.useCase,this.borrowItemUseCase , this.getBorrowedItemsUseCase) : super(ItemState.initial()) {
+  ItemNotifier(this.useCase, this.borrowItemUseCase,
+      this.getBorrowedItemsUseCase, this.updateNoteUseCase)
+      : super(ItemState.initial()) {
     loadItems();
   }
 
@@ -41,7 +44,6 @@ class ItemNotifier extends StateNotifier<ItemState> {
   }
 
 
-
   Future<void> fetchBorrowedItems(String userId) async {
     if (userId.isEmpty) {
       state = state.copyWith(error: "User ID is invalid");
@@ -50,8 +52,7 @@ class ItemNotifier extends StateNotifier<ItemState> {
 
     try {
       final items = await getBorrowedItemsUseCase.execute(userId);
-      for (final item in items) {
-      }
+      for (final item in items) {}
 
       state = state.copyWith(
         isLoading: false,
@@ -62,6 +63,19 @@ class ItemNotifier extends StateNotifier<ItemState> {
     }
   }
 
+  Future<void> updateBorrowNote(String itemId, String note) async {
+    try {
+      final success = await updateNoteUseCase.execute(itemId, note);
 
-
+      if (success) {
+        state = state.copyWith(
+          borrowedItems: state.borrowedItems.map((item) {
+            return item.id == itemId ? item.copyWith(note: note) : item;
+          }).toList(),
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(error: "Failed to update note");
+    }
+  }
 }

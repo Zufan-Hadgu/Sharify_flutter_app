@@ -3,24 +3,25 @@ class ItemEntity {
   final String name;
   final String image;
   final String smalldescription;
-  final String description;
-  final bool isAvailable;
-  final String termsAndConditions;
-  final String telephon;
-  final String address;
-  final String note;
+  final String? description;
+  final bool? isAvailable;
+  final String? termsAndConditions;
+  final String? telephon;
+  final String? address;
+  final String? note;
+  final String? borrowedBy;
 
   ItemEntity({
     required this.id,
     required this.name,
     required this.image,
     required this.smalldescription,
-    required this.description,
-    required this.isAvailable,
-    required this.termsAndConditions,
-    required this.telephon,
-    required this.address,
-    required this.note,
-
+    this.description,
+    this.isAvailable,
+    this.termsAndConditions,
+    this.telephon,
+    this.address,
+    this.note,
+    this.borrowedBy,
   });
 }

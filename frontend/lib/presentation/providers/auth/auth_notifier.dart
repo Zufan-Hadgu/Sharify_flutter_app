@@ -8,7 +8,7 @@ import '../../../domain/usecase/auth/delete_account_usecase.dart';
 import '../../../domain/usecase/auth/login_usecase.dart';
 import '../../../domain/usecase/auth/logout_usecase.dart';
 import '../../../domain/usecase/auth/register_usecase.dart';
-import '../../../router/navigation.dart';
+import '../admin/admin_dashboard_provider.dart';
 import 'auth_state.dart';
 import '../../../domain/entities/user_entity.dart';
 
@@ -29,16 +29,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     result.fold(
           (failure) => state = AuthState.error(handleFailure(failure)),  // ✅ Use centralized failure handling
           (_) {
-        print("✅ Registration successful! Redirecting to login...");
         state = AuthState.success();
+        ref.read(adminDashboardProvider.notifier).loadStatistics();
+
         router.go('/login');
       },
     );
   }
 
   Future<void> login(String email, String password) async {
-    print("🔍 Starting login process for user: $email");
-
     state = AuthState.loading();
     final result = await loginUseCase.execute(email, password);
 
@@ -48,20 +47,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = AuthState.error(handleFailure(failure));
       },
           (user) async {
-        print("✅ Login successful! User Role: ${user.role}, User ID: ${user.id}");
-
-        print("💾 Storing JWT Token...");
         await saveJWT(user.token);  // ✅ Store JWT centrally
-
-        print("🔄 Redirecting user based on role...");
         _handleUserRedirection(user);
-
-        print("🔄 Fetching items after login...");
         ref.read(itemNotifierProvider.notifier).loadItems(); // ✅ Fetch items
       },
     );
-
-    print("🔚 Login process completed.");
   }
 
   void _handleUserRedirection(UserEntity user) async {

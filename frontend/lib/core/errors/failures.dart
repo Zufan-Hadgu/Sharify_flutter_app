@@ -18,6 +18,9 @@ class Failure with _$Failure {
   /// Represents an authentication-specific error (e.g., invalid credentials, token expired).
   const factory Failure.authFailure(String message) = AuthFailure;
 
+  /// Represents an unknown error that doesn't fit any of the above categories.
+  const factory Failure.unknownFailure(String message) = UnknownFailure;
+
 // Add any other specific failure types you might need, e.g.:
 // const factory Failure.validationFailure(List<String> errors) = ValidationFailure;
 // const factory Failure.notFoundFailure() = NotFoundFailure;

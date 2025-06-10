@@ -1,17 +1,20 @@
-import '../../../core/network/api_provider.dart';
+import 'package:dio/dio.dart';
 
 class AdminRemoteDataSource {
-  final ApiProvider api;
+  final Dio dio;
 
-  AdminRemoteDataSource(this.api);
+  AdminRemoteDataSource(this.dio);
+  Future<Map<String, int>> fetchDashboardStats() async {
+    try {
+      final response = await dio.get('api/admin/statistics');
+      final data = response.data as Map<String, dynamic>;
 
-  Future<int> fetchTotalUsers() async {
-    final response = await api.get('/admin/statistics');
-    return (response['statistics']?['totalUsers'] ?? 0) as int;
-  }
-
-  Future<int> fetchTotalItems() async {
-    final response = await api.get('/admin/statistics');
-    return (response['statistics']?['availableItems'] ?? 0) as int;
+      return {
+        'totalUsers': data['totalUsers'] ?? 0,
+        'availableItems': data['availableItems'] ?? 0,
+      };
+    } catch (e) {
+      return {'totalUsers': 0, 'availableItems': 0};
+    }
   }
 }

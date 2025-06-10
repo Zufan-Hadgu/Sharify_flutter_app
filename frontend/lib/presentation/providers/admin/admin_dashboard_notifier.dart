@@ -1,34 +1,36 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../../domain/usecase/admin/get_total_users_usecase.dart';
 import '../../../domain/usecase/admin/get_total_items_usecase.dart';
+import '../../../domain/usecase/admin/get_total_users_usecase.dart';
 import 'admin_dashboard_state.dart';
 
 class AdminDashboardNotifier extends StateNotifier<AdminDashboardState> {
-  final GetTotalUsersUseCase getUsersUseCase;
-  final GetTotalItemsUseCase getItemsUseCase;
+  final GetTotalUsersUseCase getTotalUsersUseCase;
+  final GetTotalItemsUseCase getTotalItemsUseCase;
 
-  AdminDashboardNotifier(this.getUsersUseCase, this.getItemsUseCase)
+  AdminDashboardNotifier(this.getTotalUsersUseCase, this.getTotalItemsUseCase)
       : super(AdminDashboardState.initial()) {
-    loadDashboardData();
+    loadStatistics();
   }
 
-  Future<void> loadDashboardData() async {
-    state = state.copyWith(isLoading: true);
+  Future<void> loadStatistics() async {
+    print("🟢 Triggering fetchDashboardStats()");
+
     try {
-      final users = await getUsersUseCase();
-      final items = await getItemsUseCase();
-
-      print('Total users from backend: $users');
-      print('Available items from backend: $items');
-
-      state = state.copyWith(
+      state = state.copyWith(isLoading: true);
+      final users = await getTotalUsersUseCase();
+      final items = await getTotalItemsUseCase();
+      state = AdminDashboardState(
         totalUsers: users,
-        totalItems: items,
+        availableItems: items,
         isLoading: false,
       );
     } catch (e) {
-      print(' Error loading dashboard data: $e');
-      state = state.copyWith(isLoading: false);
+      state = AdminDashboardState(
+        totalUsers: 0,
+        availableItems: 0,
+        isLoading: false,
+        error: e.toString(),
+      );
     }
   }
 }

@@ -23,7 +23,7 @@ final goRouterProvider = Provider((ref) => GoRouter(
     GoRoute(path: "/login", builder: (context, state) => const LoginPage()),
     GoRoute(path: "/register", builder: (context, state) => const RegisterPage()),
     GoRoute(path: "/user_home", builder: (context, state) =>  UserHomePage()),
-    GoRoute(path: "/admin_home", builder: (context, state) =>  AdminDashboardScreen()),
+    GoRoute(path: "/admin_home", builder: (context, state) =>  AdminHomePage()),
     GoRoute(path: "/admin-profile", builder: (context, state) =>  AdminProfileScreen()),
     GoRoute(path: "/lending", builder: (context, state) =>  AdminLendingScreen()),
     GoRoute(path: "/profile", builder: (context, state) =>  ProfileScreen()),

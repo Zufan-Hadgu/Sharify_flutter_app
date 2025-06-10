@@ -1,80 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../providers/admin/admin_dashboard_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/admin/admin_dashboard_notifier.dart';
+import '../../providers/admin/admin_dashboard_state.dart';
 import '../auth/base_screen.dart';
+import '../../providers/admin/admin_dashboard_provider.dart';
 
-class AdminDashboardScreen extends ConsumerWidget {
-  const AdminDashboardScreen({Key? key}) : super(key: key);
+class AdminHomePage extends ConsumerWidget {
+  const AdminHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(adminDashboardProvider);
+    final statsState = ref.watch(adminDashboardProvider);
+    final notifier = ref.read(adminDashboardProvider.notifier);
 
     return BaseScreen(
       role: "admin",
       currentRoute: '/admin_home',
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 100),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatTile(
-                  icon: Icons.person_add_alt,
-                  label: 'Total active users',
-                  value: state.isLoading ? '...' : state.totalUsers.toString(),
-                ),
-                _buildStatTile(
-                  icon: Icons.inventory_2,
-                  label: 'Available items',
-                  value: state.isLoading ? '...' : state.totalItems.toString(),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(32.0, 50.0, 32.0, 0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004F5D),
-                  ),
-                  icon: const Icon(Icons.rate_review_outlined),
-                  onPressed: () {
-                    // TODO: Navigate to review items page
-                  },
-                  label: const Text("Review Items"),
-                ),
-              ),
-            ),
-          ],
-        ),
+      child: Center(
+        child: statsState.isLoading
+            ? const CircularProgressIndicator(color: Color(0xFF005D73))
+            : statsState.error != null
+            ? Text("❌ Error: ${statsState.error}", style: const TextStyle(color: Colors.red))
+            : _buildDashboardContent(statsState, notifier),
       ),
     );
   }
 
-  Widget _buildStatTile({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
+  Widget _buildDashboardContent(AdminDashboardState statsState, AdminDashboardNotifier notifier) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildStatCard(Icons.people, "Total active users", statsState.totalUsers),
+            _buildStatCard(Icons.storage, "Total items", statsState.availableItems),
+          ],
+        ),
+        const SizedBox(height: 32),
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF005D73),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            minimumSize: const Size(double.infinity, 50),
+          ),
+          child: const Text("📋 Review Items", style: TextStyle(color: Colors.white, fontSize: 20)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(IconData icon, String title, int count) {
     return Column(
       children: [
-        Icon(icon, size: 30),
-        const SizedBox(height: 10),
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF004F5D),
-          ),
-        ),
+        Icon(icon, color: const Color(0xFF005D73), size: 56),
+        const SizedBox(height: 8),
+        Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        Text("$count", style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Color(0xFF005D73))),
       ],
     );
   }

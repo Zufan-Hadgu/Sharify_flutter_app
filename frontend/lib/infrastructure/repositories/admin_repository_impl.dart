@@ -7,8 +7,14 @@ class AdminRepositoryImpl implements AdminRepository {
   AdminRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<int> getTotalUsers() => remoteDataSource.fetchTotalUsers();
+  Future<int> getTotalUsers() async {
+    final stats = await remoteDataSource.fetchDashboardStats();
+    return stats['totalUsers'] ?? 0;
+  }
 
   @override
-  Future<int> getTotalItems() => remoteDataSource.fetchTotalItems();
+  Future<int> getTotalItems() async {
+    final stats = await remoteDataSource.fetchDashboardStats();
+    return stats['availableItems'] ?? 0;
+  }
 }

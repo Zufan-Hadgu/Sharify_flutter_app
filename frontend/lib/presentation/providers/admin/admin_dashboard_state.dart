@@ -1,29 +1,33 @@
 class AdminDashboardState {
   final int totalUsers;
-  final int totalItems;
+  final int availableItems;
   final bool isLoading;
+  final String? error;
 
-  AdminDashboardState({
+  const AdminDashboardState({
     required this.totalUsers,
-    required this.totalItems,
-    required this.isLoading,
+    required this.availableItems,
+    this.isLoading = false,
+    this.error,
   });
 
-  factory AdminDashboardState.initial() => AdminDashboardState(
+  factory AdminDashboardState.initial() => const AdminDashboardState(
     totalUsers: 0,
-    totalItems: 0,
+    availableItems: 0,
     isLoading: true,
   );
 
   AdminDashboardState copyWith({
     int? totalUsers,
-    int? totalItems,
+    int? availableItems,
     bool? isLoading,
+    String? error,
   }) {
     return AdminDashboardState(
       totalUsers: totalUsers ?? this.totalUsers,
-      totalItems: totalItems ?? this.totalItems,
+      availableItems: availableItems ?? this.availableItems,
       isLoading: isLoading ?? this.isLoading,
+      error: error,
     );
   }
 }

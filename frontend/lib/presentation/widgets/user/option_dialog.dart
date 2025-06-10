@@ -1,15 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sharify_flutter_app/presentation/widgets/user/show_delete_dialog.dart';
+import 'package:sharify_flutter_app/presentation/widgets/user/show_logout_dialog.dart';
 
-import 'package:flutter/material.dart';
-
-
-
-void showOptionsDialog({
-  required BuildContext context,
-  required VoidCallback onLogout,
-  required VoidCallback onDelete,
-  required String userRole,
-}) {
+void showOptionDialog(BuildContext context, WidgetRef ref) {
   showDialog(
     context: context,
     barrierColor: Colors.black.withOpacity(0.4),
@@ -17,7 +12,8 @@ void showOptionsDialog({
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          width: MediaQuery.of(context).size.width * 0.85, // ✅ Adjusted width
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -25,48 +21,39 @@ void showOptionsDialog({
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Stack(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: Text(
-                      "Options",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  const Text(
+                    "Options",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Positioned(
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(dialogContext),
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.grey),
+                    onPressed: () => Navigator.pop(dialogContext),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               _buildActionButton(
                 icon: Icons.logout,
                 label: "Logout",
                 color: const Color(0xFF00777B),
                 onPressed: () {
-                  onLogout();
                   Navigator.pop(dialogContext);
+                  showLogoutDialog(context, ref); // ✅ Open logout confirmation dialog
                 },
               ),
-              if (userRole != "admin") ...[
-                const SizedBox(height: 12),
-                _buildOutlinedButton(
-                  icon: Icons.delete,
-                  label: "Delete",
-                  color: const Color(0xFF00777B),
-                  onPressed: () {
-                    onDelete();
-                    Navigator.pop(dialogContext);
-                  },
-                ),
-              ],
+              const SizedBox(height: 16),
+              _buildOutlinedButton(
+                icon: Icons.delete_forever,
+                label: "Delete Account",
+                color: const Color(0xFF00777B),
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  showDeleteDialog(context, ref); // ✅ Open delete confirmation dialog
+                },
+              ),
             ],
           ),
         ),
@@ -84,12 +71,12 @@ Widget _buildActionButton({
   return ElevatedButton.icon(
     onPressed: onPressed,
     icon: Icon(icon, color: Colors.white),
-    label: Text(label, style: const TextStyle(color: Colors.white)),
+    label: Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
     style: ElevatedButton.styleFrom(
       backgroundColor: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       minimumSize: const Size(double.infinity, 50),
-      elevation: 0,
+      elevation: 1,
     ),
   );
 }
@@ -103,11 +90,12 @@ Widget _buildOutlinedButton({
   return OutlinedButton.icon(
     onPressed: onPressed,
     icon: Icon(icon, color: color),
-    label: Text(label, style: TextStyle(color: color)),
+    label: Text(label, style: TextStyle(color: color, fontSize: 16)),
     style: OutlinedButton.styleFrom(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       side: BorderSide(color: color),
       minimumSize: const Size(double.infinity, 50),
+      foregroundColor: color,
     ),
   );
 }

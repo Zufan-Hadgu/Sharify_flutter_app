@@ -4,6 +4,7 @@ import 'package:dartz/dartz_streaming.dart' as flutter;
 
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sharify_flutter_app/presentation/pages/admin/admin_profile.dart';
 import 'package:sharify_flutter_app/presentation/pages/user/borrowing_screen.dart';
 
 import '../presentation/pages/admin/admin_home.dart';
@@ -22,21 +23,16 @@ final goRouterProvider = Provider((ref) => GoRouter(
     GoRoute(path: "/login", builder: (context, state) => const LoginPage()),
     GoRoute(path: "/register", builder: (context, state) => const RegisterPage()),
     GoRoute(path: "/user_home", builder: (context, state) =>  UserHomePage()),
-    GoRoute(path: "/admin_home", builder: (context, state) =>  AdminDashboardScreen()),
+    GoRoute(path: "/admin_home", builder: (context, state) =>  AdminHomePage()),
+    GoRoute(path: "/admin-profile", builder: (context, state) =>  AdminProfileScreen()),
     GoRoute(path: "/lending", builder: (context, state) =>  AdminLendingScreen()),
     GoRoute(path: "/profile", builder: (context, state) =>  ProfileScreen()),
     GoRoute(path: "/borrowing", builder: (context, state) =>  UserBorrowingScreen()),
-
-
-
-    GoRoute(
-      path: "/item-detail",
-      builder: (context, state) {
-        print("📥 Received navigation extra: ${state.extra}"); // ✅ Debug
-        final extra = state.extra as Map<String, dynamic>?;
-        final id = extra?["id"] as String;
-        return ItemDetailPage(id: id);
-      },
+    GoRoute(path: "/item-detail", builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      final id = extra?["id"] as String;
+      return ItemDetailPage(id: id);
+    },
     ),
   ],
 ));

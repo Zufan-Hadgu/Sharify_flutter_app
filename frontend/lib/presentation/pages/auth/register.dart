@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../../core/provider/provider.dart';
 import '../../providers/auth/auth_notifier.dart';
 import '../../widgets/auth/auth_form.dart';
 

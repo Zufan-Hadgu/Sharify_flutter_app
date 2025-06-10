@@ -4,7 +4,9 @@ import '../../../core/errors/failure_hundle.dart';
 import '../../../core/provider/item_provider.dart';
 import '../../../core/provider/provider.dart';
 import '../../../core/utils/SaveJWT.dart';
+import '../../../domain/usecase/auth/delete_account_usecase.dart';
 import '../../../domain/usecase/auth/login_usecase.dart';
+import '../../../domain/usecase/auth/logout_usecase.dart';
 import '../../../domain/usecase/auth/register_usecase.dart';
 import '../../../router/navigation.dart';
 import 'auth_state.dart';
@@ -15,10 +17,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final LoginUseCase loginUseCase;
   final GoRouter router;
   final Ref ref;
+  final LogoutUseCase logoutUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
 
-  AuthNotifier(this.ref,this.registerUseCase, this.loginUseCase, this.router): super(AuthState.initial());
+  AuthNotifier(this.ref,this.registerUseCase, this.loginUseCase, this.router,this.logoutUseCase,this.deleteAccountUseCase): super(AuthState.initial());
 
-  /// Register a new user via API
   Future<void> register(String name, String email, String password) async {
     state = AuthState.loading();
     final result = await registerUseCase.execute(name, email, password);
@@ -33,7 +36,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
-  /// Login via backend API
   Future<void> login(String email, String password) async {
     print("🔍 Starting login process for user: $email");
 
@@ -73,13 +75,44 @@ class AuthNotifier extends StateNotifier<AuthState> {
       router.go('/user_home');
     }
   }
+
+  Future<void> logout() async {
+    state = const AuthState.loading();
+
+    try {
+      final result = await logoutUseCase.execute();
+      if (result) {
+        await clearJWT();
+        state = const AuthState.success();
+        router.go('/login');
+      } else {
+        state = const AuthState.error("Logout failed");
+      }
+    } catch (e) {
+      state = AuthState.error("Logout error: ${e.toString()}");
+    }
+  }
+  Future<void> deleteAccount() async {
+    state = const AuthState.loading();
+
+    try {
+      final userId = await getUserIdFromToken();
+      if (userId == null) {
+        state = const AuthState.error("Invalid token or user not logged in.");
+        return;
+      }
+
+      final result = await deleteAccountUseCase.execute(userId);
+      if (result) {
+        await clearJWT(); // ✅ Remove token after deletion
+
+        state = const AuthState.success();
+        router.go('/login'); // ✅ Redirect to login after account deletion
+      } else {
+        state = const AuthState.error("Account deletion failed.");
+      }
+    } catch (e) {
+      state = AuthState.error("Delete error: ${e.toString()}");
+    }
+  }
 }
-
-final authNotifierProvider =
-StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final registerUseCase = ref.watch(registerUseCaseProvider);
-  final loginUseCase = ref.watch(loginUseCaseProvider);
-  final router = ref.watch(goRouterProvider);
-
-  return AuthNotifier(ref, registerUseCase, loginUseCase, router); // ✅ Pass ref here
-});

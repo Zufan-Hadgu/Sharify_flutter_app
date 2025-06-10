@@ -32,4 +32,37 @@ class AuthRemote {
       return null;
     }
   }
+  Future<bool> logout(String token) async {
+    try {
+      final response = await dio.post("/api/auth/logout");
+
+      print("📌 Response Status Code: ${response.statusCode}");
+      print("📌 Backend Response Data: ${response.data}");
+
+      return response.statusCode == 200; // ✅ Returns true if successful
+    } catch (e) {
+      print("❌ API Error for logout: ${e.toString()}");
+      return false; // ✅ Ensures a valid boolean return type on failure
+    }
+  }
+
+
+  Future<bool> deleteAccount(String token) async {
+    try {
+      final response = await dio.delete(
+        "/api/auth/delete-account",
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      print("📌 Response Status Code: ${response.statusCode}");
+      print("📌 Backend Response Data: ${response.data}");
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print("❌ Error deleting account: $e");
+      return false;
+    }
+  }
+
+
 }

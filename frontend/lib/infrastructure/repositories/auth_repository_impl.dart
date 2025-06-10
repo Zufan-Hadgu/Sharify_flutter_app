@@ -25,8 +25,8 @@ class AuthRepositoryImpl implements AuthRepository {
         profilePicture: '',
         token: '',
       );
-      await authRemote.registerUser(user);  // ✅ Send to MongoDB
-      await authLocal.saveUser(user);  // ✅ Store only user details (no password)
+      await authRemote.registerUser(user);
+      await authLocal.saveUser(user);
 
       print("Registration completed successfully!");
       return const Right(null);
@@ -64,4 +64,45 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(Failure.serverFailure(e.toString()));
     }
   }
+  @override
+  Future<bool> deleteAccount() async {
+    try {
+      final token = await getJWT(); // ✅ Retrieve stored authentication token
+      if (token == null) {
+        print("❌ No valid token found for account deletion.");
+        return false;
+      }
+
+      return await authRemote.deleteAccount(token); // ✅ Fix: Use `authRemote`
+    } catch (e) {
+      print("❌ Error in AuthRepository while deleting account: $e");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> logout() async {
+    try {
+      final token = await getJWT();
+      if (token == null) {
+        print("❌ No valid token found for logout.");
+        return false;
+      }
+
+      final success = await authRemote.logout(token); // ✅ Pass token to remote logout
+      if (success) {
+        await clearJWT(); // ✅ Clear token on successful logout
+      }
+
+      return success;
+    } catch (e) {
+      print("❌ Error in AuthRepository while logging out: $e");
+      return false;
+    }
+  }
+
+
+
+
+
 }

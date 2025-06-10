@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../../core/provider/provider.dart';
 import '../../providers/auth/auth_notifier.dart';
 import '../../providers/auth/auth_state.dart';
 import '../../widgets/auth/login_form.dart';

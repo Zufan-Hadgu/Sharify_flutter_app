@@ -5,7 +5,10 @@ import '../../repositories/item_repository.dart';
 
 class GetItemsUseCase {
   final ItemRepository repository;
+
   GetItemsUseCase(this.repository);
 
-  Future<List<ItemEntity>> execute() async => await repository.getItems();
+  Future<List<ItemEntity>> call() {
+    return repository.getItems();
+  }
 }

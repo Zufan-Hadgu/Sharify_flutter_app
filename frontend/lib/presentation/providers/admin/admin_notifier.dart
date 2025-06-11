@@ -196,7 +196,6 @@ class AdminNotifier extends StateNotifier<AdminState> {
       state = state.copyWith(isLoading: false);
       onSuccess(); // ✅ Call success callback
     } catch (e) {
-      print("❌ [AdminNotifier] Error updating item: $e");
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -207,14 +206,13 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
       await deleteItemUseCase.execute(itemId);
 
+      await loadAdminData();
       await loadAdminItems();
+
 
       state = state.copyWith(isLoading: false);
     } catch (e, stackTrace) {
-      print("❌ [AdminNotifier] Error deleting item: $e");
-      print("🧾 Stack trace: $stackTrace");
-
-      state = state.copyWith(error: "❌ Failed to delete item", isLoading: false);
+      state = state.copyWith(error: "Failed to delete item", isLoading: false);
     }
   }
 }

@@ -214,7 +214,8 @@ class _AdminLendingScreenState extends ConsumerState<AdminLendingScreen> {
               );
 
               if (confirmed == true) {
-                await ref.read(adminProvider.notifier).deleteItem(item.id); // ✅ Execute item deletion
+                await ref.read(adminProvider.notifier).deleteItem(item.id);
+                // ✅ Execute item deletion
                 context.go("/lending"); // ✅ Redirect to lending page after deletion
               }
             },

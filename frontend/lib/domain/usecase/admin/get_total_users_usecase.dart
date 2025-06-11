@@ -5,5 +5,7 @@ class GetTotalUsersUseCase {
 
   GetTotalUsersUseCase(this.repository);
 
-  Future<int> call() => repository.getTotalUsers();
+  Future<int> execute() async {
+    return await repository.getTotalUsers();
+  }
 }

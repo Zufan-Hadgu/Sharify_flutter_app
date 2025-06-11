@@ -46,6 +46,8 @@ dependencies:
   path_provider: ^2.1.1
   hooks_riverpod: ^2.0.2
   jwt_decoder: ^2.0.0
+  image_picker: ^1.0.4
+  permission_handler:
 
 
 

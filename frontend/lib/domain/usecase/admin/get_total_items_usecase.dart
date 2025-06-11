@@ -5,5 +5,7 @@ class GetTotalItemsUseCase {
 
   GetTotalItemsUseCase(this.repository);
 
-  Future<int> call() => repository.getTotalItems();
+  Future<int> execute() async {
+    return await repository.getTotalItems();
+  }
 }

@@ -20,7 +20,7 @@ void main() {
     const itemId = '123';
 
     // Mock the repository's method to return a completed Future
-    when(mockItemRepository.borrowItem(itemId)).thenAnswer((_) async {});
+    when(mockItemRepository.borrowItem(itemId)).thenAnswer((_) async => true);
 
     await useCase.execute(itemId);
 

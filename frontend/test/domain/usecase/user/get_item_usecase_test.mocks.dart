@@ -51,13 +51,12 @@ class MockItemRepository extends _i1.Mock implements _i2.ItemRepository {
           as _i3.Future<_i4.ItemEntity?>);
 
   @override
-  _i3.Future<void> borrowItem(String? itemId) =>
+  _i3.Future<bool> borrowItem(String? itemId) =>
       (super.noSuchMethod(
             Invocation.method(#borrowItem, [itemId]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i3.Future<void>);
+          as _i3.Future<bool>);
 
   @override
   _i3.Future<List<_i4.ItemEntity>> getBorrowedItems(String? userId) =>

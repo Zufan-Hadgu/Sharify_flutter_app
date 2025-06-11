@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -27,7 +25,7 @@ void main() {
 
     when(mockItemRepository.getItems()).thenAnswer((_) async => expectedItems as List<ItemEntity>);
 
-    final result = await useCase.call();
+    final result = await useCase.execute();
 
     expect(result, expectedItems);
     verify(mockItemRepository.getItems()).called(1);

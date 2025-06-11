@@ -1,43 +1,93 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../auth/base_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String name = "";
+  String email = "";
+  XFile? selectedImage;
+  final ImagePicker imagePicker = ImagePicker();
+
+  Future<void> pickImage() async {
+    final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        selectedImage = image;
+      });
+    }
+  }
+
+  void saveChanges() {
+    // Simulate saving changes
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Changes saved!")));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      role: "user", // or "admin" - adjust dynamically if needed
-      currentRoute: '/profile',
-      child: Center(
+      role: "user",
+      currentRoute: "/profile",
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage("https://example.com/profile.jpg"),
+            // Profile Image
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                shape: BoxShape.circle,
+              ),
+              child: selectedImage != null
+                  ? ClipOval(child: Image.file(File(selectedImage!.path), fit: BoxFit.cover))
+                  : Icon(Icons.person, size: 80, color: Colors.white),
             ),
+
+            SizedBox(height: 16),
+
+            // Change Picture Button
+            ElevatedButton.icon(
+              onPressed: pickImage,
+              icon: Icon(Icons.camera_alt),
+              label: Text("Change Picture"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF005D73),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+
+            SizedBox(height: 32),
+
+            // Editable Input Fields
+            ProfileInputField(label: "Name", value: name, onChanged: (newName) => setState(() => name = newName)),
+            SizedBox(height: 16),
+            ProfileInputField(label: "Email", value: email, onChanged: (newEmail) => setState(() => email = newEmail)),
+
+            SizedBox(height: 32),
+
+            // Save Changes Button
+            ElevatedButton(
+              onPressed: saveChanges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF005D73),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text("Save Changes", style: TextStyle(fontSize: 16, color: Colors.white)),
+              ),
+            ),
+
             SizedBox(height: 20),
-            Text(
-              "John Doe",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "john.doe@example.com",
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(height: 30),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Log Out"),
-              onTap: () {},
-            ),
           ],
         ),
       ),
@@ -45,3 +95,22 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
+class ProfileInputField extends StatelessWidget {
+  final String label;
+  final String value;
+  final Function(String) onChanged;
+
+  ProfileInputField({required this.label, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      onChanged: onChanged,
+      controller: TextEditingController(text: value),
+    );
+  }
+}

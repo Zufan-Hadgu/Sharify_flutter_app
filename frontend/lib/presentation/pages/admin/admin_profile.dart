@@ -25,6 +25,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
   }
 
   void saveChanges() {
+    // Simulate saving changes
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Changes saved!")));
   }
 

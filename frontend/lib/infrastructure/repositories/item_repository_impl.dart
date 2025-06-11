@@ -18,37 +18,35 @@ class ItemRepositoryImpl implements ItemRepository {
       final entityItems = items.map((e) => e.toEntity()).toList();
       await localDataSource.cacheItems(items);
       return entityItems;
-    } catch (_) {
+    } catch (e) {
+      print("❌ [LocalStorage] Fetching cached items due to error: $e");
       final local = await localDataSource.getCachedItems();
-      return local.map((e) => e.toEntity()).toList();
+      return local.isNotEmpty
+          ? local.map((e) => e.toEntity()).toList()
+          : throw Exception("❌ No cached items available");
     }
   }
-
+  @override
   Future<ItemEntity?> getItemById(String id) async {
-    try {
-      final localItem = await localDataSource.getItemById(id);
-      return localItem?.toEntity();
-    } catch (_) {
-      return null;
-    }
+    final item = await localDataSource.getItemById(id);
+    print("🛠️ [Repository] Found Item: $item"); // ✅ Log output
+    return item?.toEntity(); // ✅ Ensure conversion to ItemEntity
   }
-
-  Future<void> borrowItem(String itemId) async {
+  Future<bool> borrowItem(String itemId) async {
     try {
+      print("🔄 Starting borrow process for item: $itemId");
+
       final token = await getJWT();
-      if (token == null) throw Exception("User authentication required.");
-
-      final userId = await getUserIdFromToken();
-      if (userId == null) throw Exception("User authentication failed.");
-
-      final item = await localDataSource.getItemById(itemId);
-      if (item == null) throw Exception("Item not available locally.");
+      if (token == null) {
+        return false;  // ✅ Explicitly returning false instead of throwing
+      }
 
       final success = await remoteDataSource.borrowItem(itemId, token);
-      if (!success) throw Exception("Failed to update borrowing status.");
+      return success;  // ✅ Ensure a return value
 
-      await localDataSource.borrowItemLocally(itemId, userId);
-    } catch (_) {}
+    } catch (error) {
+      return false;  // ✅ Return false in error cases
+    }
   }
 
   @override

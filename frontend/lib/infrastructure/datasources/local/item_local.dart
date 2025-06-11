@@ -19,21 +19,22 @@ class ItemLocalDataSource {
 
     return await openDatabase(
       path,
-      version: 4, // ✅ Incremented version (was 3)
+      version: 5, // ✅ Updated version (incremented to 5)
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE items (
           id TEXT PRIMARY KEY,
-          name TEXT,
+          name TEXT NOT NULL,
           image TEXT,
-          smalldescription TEXT,  -- ✅ Corrected name here
+          smalldescription TEXT,
           description TEXT,
           isAvailable INTEGER,
           termsAndConditions TEXT,
           telephon TEXT,
           address TEXT,
-          note TEXT DEFAULT ""
-        )
+          note TEXT DEFAULT "",
+          borrowedBy TEXT DEFAULT NULL -- ✅ Added missing column
+        );
         ''');
 
         await db.execute('''
@@ -43,24 +44,18 @@ class ItemLocalDataSource {
           userId TEXT NOT NULL,
           name TEXT NOT NULL,
           image TEXT NOT NULL,
-          smalldescription TEXT NOT NULL,  -- ✅ Corrected name here
+          smalldescription TEXT NOT NULL,
           borrowedAt TEXT DEFAULT CURRENT_TIMESTAMP
-        )
+        );
         ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 4) {  // ✅ Check if upgrading to version 4
+        if (oldVersion < 5) {  // ✅ Ensure migration runs only if upgrading
           print("🔄 Running database migration to version $newVersion");
 
-          await db.execute('''
-          ALTER TABLE items RENAME COLUMN smallDescription TO smalldescription;
-          ''');
+          await db.execute('ALTER TABLE items ADD COLUMN borrowedBy TEXT DEFAULT NULL;'); // ✅ Add column safely
 
-          await db.execute('''
-          ALTER TABLE borrowed_items RENAME COLUMN smallDescription TO smalldescription;
-          ''');
-
-          print("✅ Column renamed successfully.");
+          print("✅ Migration completed.");
         }
       },
     );
@@ -69,6 +64,7 @@ class ItemLocalDataSource {
   Future<void> cacheItems(List<ItemModel> items) async {
     final database = await db;
     final batch = database.batch();
+
     for (final item in items) {
       batch.insert(
         'items',
@@ -76,12 +72,14 @@ class ItemLocalDataSource {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
+
     await batch.commit();
   }
 
   Future<List<ItemModel>> getCachedItems() async {
     final database = await db;
     final maps = await database.query('items');
+
     return maps.map((map) => ItemModel.fromJson(map)).toList();
   }
 
@@ -109,6 +107,7 @@ class ItemLocalDataSource {
     if (item == null) {
       throw Exception("Item not available locally.");
     }
+
     final existingItems = await database.query(
       'borrowed_items',
       where: 'itemId = ? AND userId = ?',
@@ -125,9 +124,8 @@ class ItemLocalDataSource {
       'userId': userId,
       'name': item.name,
       'image': item.image,
-      'smalldescription': item.smalldescription,  // ✅ Updated column name
+      'smalldescription': item.smalldescription,
       'borrowedAt': DateTime.now().toIso8601String(),
     });
   }
-
- }
+}

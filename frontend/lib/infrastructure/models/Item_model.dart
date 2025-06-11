@@ -28,19 +28,23 @@ class ItemModel {
     this.borrowedBy,
   });
 
-  factory ItemModel.fromJson(Map<String, dynamic> json) => ItemModel(
-    id: json['id'],
-    name: json['name'],
-    image: fixImageUrl(json['image']),
-    smalldescription: json['smalldescription'],
-    description: json['description'],
-    isAvailable: json['isAvailable'] == 1,
-    termsAndConditions: json['termsAndConditions'],
-    telephon: json['telephon'],
-    address: json['address'],
-    note: json['note'],
-    borrowedBy: json['borrowedBy'],
-  );
+  factory ItemModel.fromJson(Map<String, dynamic> json) {
+    print("🧾 [ItemModel] Parsing JSON: $json"); // ✅ Debugging step
+
+    return ItemModel(
+      id: json['id'] ?? '', // ✅ Handle null by providing default
+      name: json['name'] ?? 'Unnamed Item',
+      image: fixImageUrl(json['image'] ?? ''),
+      smalldescription: json['smalldescription'] ?? 'No small description',
+      description: json['description'] ?? '',
+      isAvailable: json['isAvailable'] ?? false,
+      termsAndConditions: json['termsAndConditions'] ?? '',
+      telephon: json['telephon'] ?? '',
+      address: json['address'] ?? '',
+      note: json['note'] ?? '',
+      borrowedBy: json['borrowedBy'] ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,

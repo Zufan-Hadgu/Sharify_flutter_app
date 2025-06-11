@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/admin/admin_dashboard_notifier.dart';
-import '../../providers/admin/admin_dashboard_state.dart';
+
+import '../../providers/admin/admin_notifier.dart';
+import '../../providers/admin/admin_provider.dart';
+import '../../providers/admin/admin_state.dart';
 import '../auth/base_screen.dart';
-import '../../providers/admin/admin_dashboard_provider.dart';
+
 
 class AdminHomePage extends ConsumerWidget {
   const AdminHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statsState = ref.watch(adminDashboardProvider);
-    final notifier = ref.read(adminDashboardProvider.notifier);
+    final statsState = ref.watch(adminProvider);
+    final notifier = ref.read(adminProvider.notifier);
 
     return BaseScreen(
       role: "admin",
@@ -26,7 +28,7 @@ class AdminHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDashboardContent(AdminDashboardState statsState, AdminDashboardNotifier notifier) {
+  Widget _buildDashboardContent(AdminState statsState, AdminNotifier notifier) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

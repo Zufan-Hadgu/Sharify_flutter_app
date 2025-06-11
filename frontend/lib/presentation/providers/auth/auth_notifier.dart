@@ -8,7 +8,7 @@ import '../../../domain/usecase/auth/delete_account_usecase.dart';
 import '../../../domain/usecase/auth/login_usecase.dart';
 import '../../../domain/usecase/auth/logout_usecase.dart';
 import '../../../domain/usecase/auth/register_usecase.dart';
-import '../admin/admin_dashboard_provider.dart';
+import '../admin/admin_provider.dart';
 import 'auth_state.dart';
 import '../../../domain/entities/user_entity.dart';
 
@@ -30,7 +30,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           (failure) => state = AuthState.error(handleFailure(failure)),  // ✅ Use centralized failure handling
           (_) {
         state = AuthState.success();
-        ref.read(adminDashboardProvider.notifier).loadStatistics();
+        ref.read(adminProvider.notifier).loadAdminData();
 
         router.go('/login');
       },

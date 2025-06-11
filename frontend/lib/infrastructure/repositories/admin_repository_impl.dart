@@ -97,5 +97,11 @@ class AdminRepositoryImpl implements AdminRepository {
     print("📡 [Repository] Calling RemoteDataSource for item update...");
     await remoteDataSource.updateItem(itemId: itemId, item: item, image: image);
   }
+  @override
+  Future<void> deleteItem(String itemId) async {
+    print("📡 [RepositoryImpl] Calling RemoteDataSource for item deletion...");
+    await remoteDataSource.deleteItem(itemId);
+  }
 
 }
+

@@ -163,9 +163,8 @@ class AdminRemoteDataSource {
   Future<void> updateItem({
     required String itemId,
     required ItemEntity item,
-    required MultipartFile? image, // ✅ Uses MultipartFile for image upload
+    required MultipartFile? image,
   }) async {
-    print("📡 [RemoteDataSource] Sending item update request to API...");
 
     final formData = FormData.fromMap({
       "name": item.name,
@@ -185,12 +184,30 @@ class AdminRemoteDataSource {
       "/api/admin/update-item/$itemId",
       data: formData,
     );
+  }
+  Future<void> deleteItem(String itemId) async {
+    try {
+      final token = await getJWT();
 
-    print("✅ [RemoteDataSource] Item updated via API!");
+      final response = await dio.delete(
+        "/api/admin/delete-item/$itemId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+    } catch (e) {
+      print("Error deleting item: $e");
+    }
   }
 
 
 }
+
+
+
+
 
 
 

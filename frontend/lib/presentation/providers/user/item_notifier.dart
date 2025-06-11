@@ -36,15 +36,19 @@ class ItemNotifier extends StateNotifier<ItemState> {
   }
 
   Future<void> borrowItem(String itemId) async {
-    await borrowItemUseCase.execute(itemId);
 
-    final userId = await getUserIdFromToken();
-    if (userId != null) {
-      fetchBorrowedItems(userId); // ✅ Pass the actual userId
-    } else {
-      print("❌ Could not fetch userId from token");
+    try {
+      await borrowItemUseCase.execute(itemId);
+
+      final userId = await getUserIdFromToken();
+      if (userId != null) {
+        fetchBorrowedItems(userId); // ✅ Pass the actual userId
+      } else {
+      }
+    } catch (e) {
     }
   }
+
 
 
   Future<void> fetchBorrowedItems(String userId) async {

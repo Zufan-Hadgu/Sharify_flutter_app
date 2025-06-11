@@ -44,8 +44,10 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  // Inside _buildTextField method:
   Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
     return TextFormField(
+      key: Key(label.toLowerCase()),
       controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(

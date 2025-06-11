@@ -6,5 +6,6 @@ String handleFailure(Failure failure) {
     authFailure: (message) => message,
     networkFailure: () => "Network issue occurred",
     cacheFailure: () => "Cache issue occurred",
+    unknownFailure: (message) => message.isNotEmpty ? message : "An unknown error occurred", // ✅ Handle empty message
   );
 }

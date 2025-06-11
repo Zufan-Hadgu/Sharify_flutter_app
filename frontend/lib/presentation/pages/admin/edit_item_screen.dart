@@ -74,7 +74,7 @@ class _EditItemScreenState extends ConsumerState<EditItemScreen> {
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.go('/lending'), // ✅ Navigate correctly using GoRouter
           ),
         ),
         body: SingleChildScrollView(

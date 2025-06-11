@@ -122,7 +122,7 @@ export const updateItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
     try {
-        const items = await ItemModel.find({}).populate("borrowedBy"); // ✅ Populate user info for borrowedBy
+        const items = await ItemModel.find({})
 
         const itemDetails = items.map(item => ({
             id: item.id,

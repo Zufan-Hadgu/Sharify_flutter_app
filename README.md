@@ -44,8 +44,11 @@ Sharify provides two types of user roles:
 ## 🔐 Environment Variables
 
 For the backend server, create a `.env` file:
+
 MONGODB_URL='mongodb://127.0.0.1:27017'
+
 JWT_SECRET= 'secret#text'
+
 NODE_ENV='development'
 
 

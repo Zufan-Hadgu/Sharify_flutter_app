@@ -72,7 +72,7 @@ Team Members
 | 1  | Sifen Getachew    | UGR/2452/15   | S-1     |
 | 2  | Ribka Mengiste    | UGR/9680/15   | S-2     |
 | 3  | Zufan Gebrehiwot  | UGR/7674/15   | S-2     |
-| 4  | Tsega Ephrem      | UGR/7925/14   | S-1     |
+| 4  | Tsega Ephrem      | UGR/7925/15   | S-1     |
 | 5  | Meti Kejelcha     | UGR/6462/15   | S-2     |
 
 
